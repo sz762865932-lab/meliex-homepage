@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: sz762865932/meliex-homepage
+  repo: sz762865932-lab/meliex-homepage
   branch: main
   base_url: https://meliexpet.cn
   auth_endpoint: /api/auth
