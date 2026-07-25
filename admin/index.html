@@ -108,7 +108,43 @@
     .pi-fields .pi-desc{flex:2.5}
     .pi-fields .pi-cat{flex:1}
     
-    .pi-actions{flex-shrink:0}
+    .pi-actions{flex-shrink:0;display:flex;align-items:center;gap:.4rem}
+    
+    /* Image upload */
+    .pi-image-area{
+      width:76px;height:76px;border-radius:6px;
+      border:2px dashed var(--line);cursor:pointer;
+      flex-shrink:0;position:relative;overflow:hidden;
+      display:flex;align-items:center;justify-content:center;
+      transition:border-color .2s,box-shadow .2s;
+      background:var(--bg)
+    }
+    .pi-image-area:hover{border-color:var(--gold);box-shadow:0 0 0 2px rgba(196,149,106,.15)}
+    .pi-image-area img{width:100%;height:100%;object-fit:cover}
+    .pi-image-placeholder{
+      display:flex;flex-direction:column;align-items:center;
+      gap:3px;font-size:1.5rem;color:var(--gray);opacity:.6
+    }
+    .pi-image-placeholder span{
+      font-size:.56rem;color:var(--gray);line-height:1
+    }
+    .pi-image-delete{
+      position:absolute;top:3px;right:3px;
+      width:20px;height:20px;border-radius:50%;
+      background:rgba(220,38,38,.85);color:#fff;
+      border:none;font-size:13px;line-height:1;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;
+      opacity:0;transition:opacity .2s;
+      padding:0
+    }
+    .pi-image-area:hover .pi-image-delete{opacity:1}
+    .pi-image-delete:hover{background:var(--red)}
+    .pi-image-loading{
+      position:absolute;inset:0;background:rgba(255,255,255,.85);
+      display:flex;align-items:center;justify-content:center;
+      font-size:.65rem;color:var(--dark)
+    }
+    .pi-image-uploading{cursor:wait;opacity:.6}
     
     .empty-state{
       text-align:center;padding:4rem 2rem;color:var(--gray)
@@ -169,6 +205,9 @@
 
 <!-- Main -->
 <div class="main" id="productList"></div>
+
+<!-- Hidden file input for image upload -->
+<input type="file" id="imageFileInput" accept="image/*" style="display:none" onchange="handleImageSelected(event)">
 
 <!-- Status bar -->
 <div class="status-bar" id="statusBar" style="display:none">
@@ -260,6 +299,13 @@ function renderProducts() {
     <div class="product-item" draggable="true" data-index="${i}">
       <span class="drag-handle" title="拖拽排序">⋮⋮</span>
       <div class="pi-order">${i+1}</div>
+      <div class="pi-image-area" onclick="triggerImageUpload(${i})" id="imgArea${i}">
+        ${p.image 
+          ? `<img src="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/images/products/${p.image}" alt="${esc(p.name||'')}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="pi-image-placeholder" style="display:none">📷<span>点击上传</span></div>`
+          : `<div class="pi-image-placeholder">📷<span>点击上传</span></div>`
+        }
+        ${p.image ? `<button class="pi-image-delete" onclick="event.stopPropagation();deleteImage(${i})" title="删除图片">✕</button>` : ''}
+      </div>
       <div class="pi-fields">
         <input class="pi-name" value="${esc(p.name||'')}" placeholder="产品名称（英文）" onchange="updateField(${i},'name',this.value)">
         <input class="pi-desc" value="${esc(p.description||'')}" placeholder="简短描述" onchange="updateField(${i},'description',this.value)">
@@ -371,6 +417,201 @@ async function saveToGitHub() {
     showStatus('success', `✅ 已保存！网站将在 1-2 分钟内自动更新。`);
   } catch(e) {
     showStatus('error', '保存失败：' + e.message);
+  }
+}
+
+// ===== Image Upload =====
+let imageUploadIndex = null;
+
+function triggerImageUpload(index) {
+  imageUploadIndex = index;
+  document.getElementById('imageFileInput').click();
+}
+
+async function handleImageSelected(event) {
+  const file = event.target.files[0];
+  if (!file) { imageUploadIndex = null; return; }
+  
+  const index = imageUploadIndex;
+  imageUploadIndex = null;
+  event.target.value = '';
+  
+  // Validate file type
+  if (!file.type.startsWith('image/')) {
+    showStatus('error', '请选择图片文件');
+    return;
+  }
+  
+  // Show loading
+  const area = document.getElementById('imgArea' + index);
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'pi-image-loading';
+  loadingEl.textContent = '上传中…';
+  area.classList.add('pi-image-uploading');
+  area.appendChild(loadingEl);
+  
+  try {
+    const base64 = await readFileAsBase64(file);
+    const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-').toLowerCase();
+    const fileName = cleanName || 'image-' + Date.now() + '.jpg';
+    
+    await uploadImageToGitHub(fileName, base64);
+    
+    // Update product data
+    products[index].image = fileName;
+    markUnsaved();
+    renderProducts();
+    showStatus('success', `✅ 图片 "${fileName}" 已上传`);
+  } catch(e) {
+    area.classList.remove('pi-image-uploading');
+    if (loadingEl && loadingEl.parentNode) loadingEl.remove();
+    showStatus('error', '图片上传失败：' + e.message);
+  }
+}
+
+function readFileAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result.split(',')[1]; // strip data:...;base64, prefix
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadImageToGitHub(fileName, base64Content) {
+  const imgPath = `images/products/${fileName}`;
+  
+  // Check if file already exists (to get sha for update)
+  let sha = null;
+  try {
+    const checkResp = await fetch(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${imgPath}`,
+      { headers: { Authorization: `token ${token}` } }
+    );
+    if (checkResp.ok) {
+      const fd = await checkResp.json();
+      sha = fd.sha;
+    }
+  } catch(e) { /* file doesn't exist, sha stays null */ }
+  
+  const body = {
+    message: `Upload ${fileName} [admin]`,
+    content: base64Content
+  };
+  if (sha) body.sha = sha;
+  
+  const resp = await fetch(
+    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${imgPath}`,
+    {
+      method: 'PUT',
+      headers: {
+        Authorization: `token ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    }
+  );
+  
+  if (!resp.ok) {
+    const err = await resp.json();
+    throw new Error(err.message || '上传失败');
+  }
+  
+  return await resp.json();
+}
+
+async function deleteImage(index) {
+  const fileName = products[index].image;
+  if (!fileName) return;
+  
+  if (!confirm(`确定删除图片 "${fileName}" 吗？`)) return;
+  
+  showStatus('loading', '删除中...');
+  
+  try {
+    const imgPath = `images/products/${fileName}`;
+    
+    // Get SHA
+    const checkResp = await fetch(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${imgPath}`,
+      { headers: { Authorization: `token ${token}` } }
+    );
+    if (!checkResp.ok) {
+      // File may not exist on GitHub; just clear local reference
+      throw new Error('文件不存在于仓库中');
+    }
+    const fd = await checkResp.json();
+    
+    // Delete from GitHub
+    const delResp = await fetch(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${imgPath}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `token ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `Delete ${fileName} [admin]`,
+          sha: fd.sha
+        })
+      }
+    );
+    
+    if (!delResp.ok) {
+      const err = await delResp.json();
+      throw new Error(err.message || '删除失败');
+    }
+    
+    // Clear image field
+    products[index].image = '';
+    markUnsaved();
+    renderProducts();
+    showStatus('success', `✅ 图片 "${fileName}" 已删除`);
+  } catch(e) {
+    // If file not found on GitHub, just clear local reference
+    if (e.message.includes('不存在')) {
+      products[index].image = '';
+      markUnsaved();
+      renderProducts();
+      showStatus('success', '✅ 已清除本地图片引用（文件在仓库中不存在）');
+    } else {
+      showStatus('error', '删除失败：' + e.message);
+    }
+  }
+}
+
+function updateImageDisplay(index) {
+  const area = document.getElementById('imgArea' + index);
+  if (!area) return;
+  const p = products[index];
+  const hasDelete = area.querySelector('.pi-image-delete');
+  
+  if (p.image) {
+    const img = area.querySelector('img');
+    const placeholder = area.querySelector('.pi-image-placeholder');
+    if (img) {
+      img.src = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/images/products/${p.image}`;
+      img.style.display = '';
+    }
+    if (placeholder) placeholder.style.display = 'none';
+    if (!hasDelete) {
+      const delBtn = document.createElement('button');
+      delBtn.className = 'pi-image-delete';
+      delBtn.title = '删除图片';
+      delBtn.textContent = '✕';
+      delBtn.onclick = (e) => { e.stopPropagation(); deleteImage(index); };
+      area.appendChild(delBtn);
+    }
+  } else {
+    const img = area.querySelector('img');
+    const placeholder = area.querySelector('.pi-image-placeholder');
+    if (img) img.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'flex';
+    if (hasDelete) hasDelete.remove();
   }
 }
 

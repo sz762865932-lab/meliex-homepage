@@ -288,6 +288,7 @@ a:hover{color:var(--dark)}
   margin-bottom:.1rem
 }
 .footer-inner p{color:rgba(255,255,255,.38);font-size:.63rem;line-height:1.8}
+.footer-disclaimer{max-width:420px;margin-top:.6rem}
 .footer-right{text-align:right}
 
 /* -------- responsive -------- */
