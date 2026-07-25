@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meliex · 产品管理后台</title>
+  <style>
+    :root {
+      --gold: #C4956A;
+      --dark: #1A2B4A;
+      --cream: #F5F0E8;
+      --white: #FFFFFF;
+      --gray: #6B7280;
+      --line: #E5E0D8;
+      --bg: #FAF8F5;
+      --red: #DC2626;
+      --green: #16A34A;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--dark);line-height:1.6}
+    
+    /* Header */
+    .header{
+      background:var(--dark);color:var(--white);
+      padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between
+    }
+    .header h1{font-size:1.1rem;letter-spacing:.06em}
+    .header .brand{color:var(--gold);font-family:Georgia,serif}
+    .header button{
+      background:transparent;border:1px solid rgba(255,255,255,.3);
+      color:var(--white);padding:.4rem 1rem;
+      font-size:.72rem;cursor:pointer;border-radius:4px
+    }
+    .header button:hover{background:rgba(255,255,255,.08)}
+    
+    /* Auth */
+    .auth-overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;
+      display:flex;align-items:center;justify-content:center
+    }
+    .auth-box{
+      background:var(--white);padding:2.5rem;border-radius:8px;
+      width:420px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.2)
+    }
+    .auth-box h2{margin-bottom:.5rem;font-size:1.15rem}
+    .auth-box p{font-size:.75rem;color:var(--gray);margin-bottom:1.5rem}
+    .auth-box input{
+      width:100%;padding:.65rem;border:1px solid var(--line);
+      border-radius:4px;font-size:.85rem;margin-bottom:.8rem;
+      font-family:monospace
+    }
+    .auth-box button{
+      width:100%;padding:.65rem;background:var(--dark);
+      color:var(--white);border:none;border-radius:4px;
+      font-size:.85rem;cursor:pointer
+    }
+    .auth-box button:hover{opacity:.9}
+    .auth-hint{font-size:.68rem;color:var(--gray);margin-top:.8rem;line-height:1.6}
+    .auth-hint code{background:var(--bg);padding:1px 5px;border-radius:3px;font-size:.7rem}
+
+    /* Toolbar */
+    .toolbar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:1rem 2rem;background:var(--white);border-bottom:1px solid var(--line)
+    }
+    .toolbar .count{font-size:.78rem;color:var(--gray)}
+    .btn{
+      padding:.5rem 1.2rem;border-radius:4px;font-size:.78rem;
+      cursor:pointer;font-weight:500;border:none;transition:all .2s
+    }
+    .btn-primary{background:var(--gold);color:var(--white)}
+    .btn-primary:hover{opacity:.85}
+    .btn-save{background:var(--dark);color:var(--white);margin-left:.5rem}
+    .btn-save:hover{opacity:.85}
+    .btn-danger{background:transparent;color:var(--red);border:1px solid var(--red)}
+    .btn-danger:hover{background:var(--red);color:var(--white)}
+
+    /* Product list */
+    .main{padding:2rem;max-width:960px;margin:0 auto}
+    
+    .product-item{
+      background:var(--white);border:1px solid var(--line);
+      border-radius:6px;padding:1.2rem;margin-bottom:.8rem;
+      display:flex;align-items:center;gap:1rem;
+      transition:box-shadow .2s
+    }
+    .product-item:hover{box-shadow:0 2px 12px rgba(0,0,0,.04)}
+    .product-item.drag-over{border-color:var(--gold);background:var(--cream)}
+    
+    .drag-handle{
+      cursor:grab;color:var(--gray);font-size:1.2rem;
+      user-select:none;padding:.3rem
+    }
+    .drag-handle:active{cursor:grabbing}
+    
+    .pi-order{
+      width:32px;height:32px;border-radius:50%;
+      background:var(--bg);display:flex;align-items:center;justify-content:center;
+      font-size:.7rem;font-weight:700;color:var(--gold);flex-shrink:0
+    }
+    .pi-fields{flex:1;display:flex;gap:.8rem;align-items:center}
+    .pi-fields input{
+      padding:.5rem .7rem;border:1px solid var(--line);border-radius:4px;
+      font-size:.78rem;flex:1
+    }
+    .pi-fields input:focus{outline:none;border-color:var(--gold)}
+    .pi-fields .pi-name{flex:2}
+    .pi-fields .pi-desc{flex:2.5}
+    .pi-fields .pi-cat{flex:1}
+    
+    .pi-actions{flex-shrink:0}
+    
+    .empty-state{
+      text-align:center;padding:4rem 2rem;color:var(--gray)
+    }
+    .empty-state .icon{font-size:3rem;margin-bottom:1rem;opacity:.3}
+    .empty-state p{font-size:.82rem}
+
+    /* Status */
+    .status-bar{
+      position:fixed;bottom:0;left:0;right:0;
+      padding:.6rem 2rem;background:var(--dark);color:var(--white);
+      font-size:.7rem;display:flex;align-items:center;justify-content:space-between;
+      z-index:100
+    }
+    .status-bar.success{background:var(--green)}
+    .status-bar.error{background:var(--red)}
+    .status-bar .close-status{cursor:pointer;margin-left:1rem;opacity:.7}
+    
+    .unsaved{color:var(--gold);font-size:.68rem;margin-left:1rem}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1><span class="brand">MELIEX</span> · 产品管理后台</h1>
+  </div>
+  <div>
+    <span class="unsaved" id="unsavedBadge" style="display:none">● 有未保存的更改</span>
+    <button onclick="doLogout()">退出登录</button>
+  </div>
+</div>
+
+<!-- Auth overlay -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-box">
+    <h2>🔐 登录后台</h2>
+    <p>使用 GitHub Personal Access Token 验证</p>
+    <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+    <button onclick="doLogin()">登录</button>
+    <div class="auth-hint">
+      <strong>没有 Token？</strong> 去 GitHub 创建一个：<br>
+      GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens<br>
+      需要权限：<code>Contents</code>（读写）<br>
+      仓库范围：<code>sz762865932/meliex-homepage</code>
+    </div>
+  </div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <div class="count" id="productCount">0 个产品</div>
+  <div>
+    <button class="btn btn-primary" onclick="addProduct()">+ 添加产品</button>
+    <button class="btn btn-save" onclick="saveToGitHub()">💾 保存到网站</button>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main" id="productList"></div>
+
+<!-- Status bar -->
+<div class="status-bar" id="statusBar" style="display:none">
+  <span id="statusText"></span>
+  <span class="close-status" onclick="hideStatus()">✕</span>
+</div>
+
+<script>
+const REPO_OWNER = 'sz762865932';
+const REPO_NAME = 'meliex-homepage';
+const DATA_PATH = 'data/products.json';
+let products = [];
+let originalJSON = '';
+let token = localStorage.getItem('meliex_admin_token');
+
+// ===== Auth =====
+function showAuth(){ document.getElementById('authOverlay').style.display = 'flex' }
+function hideAuth(){ document.getElementById('authOverlay').style.display = 'none' }
+
+async function doLogin() {
+  const t = document.getElementById('tokenInput').value.trim();
+  if (!t) return alert('请输入 Token');
+  // Verify token works
+  try {
+    const resp = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`, {
+      headers: { Authorization: `token ${t}` }
+    });
+    if (!resp.ok) throw new Error('Token 无效或无权限');
+    token = t;
+    localStorage.setItem('meliex_admin_token', token);
+    hideAuth();
+    await loadProducts();
+  } catch(e) {
+    alert('登录失败：' + e.message);
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem('meliex_admin_token');
+  token = null;
+  products = [];
+  renderProducts();
+  showAuth();
+}
+
+// ===== Data =====
+async function loadProducts() {
+  showStatus('loading', '加载中...');
+  try {
+    // Get current file SHA first
+    const fileResp = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`, {
+      headers: { Authorization: `token ${token}` }
+    });
+    if (fileResp.ok) {
+      const fileData = await fileResp.json();
+      const content = atob(fileData.content);
+      originalJSON = content;
+      fileData._sha = fileData.sha;
+      const data = JSON.parse(content);
+      products = data.products || [];
+    } else if (fileResp.status === 404) {
+      // File doesn't exist yet, create default
+      products = [];
+      originalJSON = '';
+    } else {
+      throw new Error('加载失败: ' + fileResp.status);
+    }
+    renderProducts();
+    hideStatus();
+  } catch(e) {
+    showStatus('error', '加载失败：' + e.message);
+  }
+}
+
+function renderProducts() {
+  const container = document.getElementById('productList');
+  const countEl = document.getElementById('productCount');
+  countEl.textContent = products.length + ' 个产品';
+  
+  if (products.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="icon">📦</div>
+      <p>还没有产品，点击「添加产品」开始</p>
+    </div>`;
+    return;
+  }
+  
+  container.innerHTML = products.map((p, i) => `
+    <div class="product-item" draggable="true" data-index="${i}">
+      <span class="drag-handle" title="拖拽排序">⋮⋮</span>
+      <div class="pi-order">${i+1}</div>
+      <div class="pi-fields">
+        <input class="pi-name" value="${esc(p.name||'')}" placeholder="产品名称（英文）" onchange="updateField(${i},'name',this.value)">
+        <input class="pi-desc" value="${esc(p.description||'')}" placeholder="简短描述" onchange="updateField(${i},'description',this.value)">
+        <input class="pi-cat" value="${esc(p.category||'')}" placeholder="分类标签" onchange="updateField(${i},'category',this.value)">
+      </div>
+      <div class="pi-actions">
+        <button class="btn btn-danger" onclick="deleteProduct(${i})">删除</button>
+      </div>
+    </div>
+  `).join('');
+  
+  // Drag & drop
+  document.querySelectorAll('.product-item').forEach(el => {
+    el.addEventListener('dragstart', handleDragStart);
+    el.addEventListener('dragover', handleDragOver);
+    el.addEventListener('dragleave', handleDragLeave);
+    el.addEventListener('drop', handleDrop);
+  });
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
+let dragIndex = null;
+function handleDragStart(e) { dragIndex = parseInt(e.currentTarget.dataset.index); e.dataTransfer.effectAllowed = 'move' }
+function handleDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over') }
+function handleDragLeave(e) { e.currentTarget.classList.remove('drag-over') }
+function handleDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const dropIndex = parseInt(e.currentTarget.dataset.index);
+  if (dragIndex !== null && dragIndex !== dropIndex) {
+    const [item] = products.splice(dragIndex, 1);
+    products.splice(dropIndex, 0, item);
+    reorder();
+    renderProducts();
+    markUnsaved();
+  }
+  dragIndex = null;
+}
+
+function updateField(index, field, value) {
+  products[index][field] = value;
+  reorder();
+  markUnsaved();
+}
+
+function addProduct() {
+  products.push({ name: 'New Product', description: 'Description', category: 'category-key', order: products.length + 1 });
+  reorder();
+  renderProducts();
+  markUnsaved();
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function deleteProduct(index) {
+  if (!confirm('确定删除「' + (products[index].name || '这个产品') + '」？')) return;
+  products.splice(index, 1);
+  reorder();
+  renderProducts();
+  markUnsaved();
+}
+
+function reorder() {
+  products.forEach((p, i) => p.order = i + 1);
+}
+
+function markUnsaved() {
+  document.getElementById('unsavedBadge').style.display = 'inline';
+}
+
+// ===== Save =====
+async function saveToGitHub() {
+  const newJSON = JSON.stringify({ products: products }, null, 2);
+  
+  showStatus('loading', '正在保存...');
+  
+  try {
+    // Get current file SHA
+    let sha = null;
+    const fileResp = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`, {
+      headers: { Authorization: `token ${token}` }
+    });
+    if (fileResp.ok) {
+      const fd = await fileResp.json();
+      sha = fd.sha;
+    }
+    
+    // Commit
+    const commitResp = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `token ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `Update products [admin]`,
+        content: btoa(unescape(encodeURIComponent(newJSON))),
+        sha: sha
+      })
+    });
+    
+    if (!commitResp.ok) {
+      const err = await commitResp.json();
+      throw new Error(err.message || '保存失败');
+    }
+    
+    originalJSON = newJSON;
+    document.getElementById('unsavedBadge').style.display = 'none';
+    showStatus('success', `✅ 已保存！网站将在 1-2 分钟内自动更新。`);
+  } catch(e) {
+    showStatus('error', '保存失败：' + e.message);
+  }
+}
+
+// ===== Status =====
+function showStatus(type, msg) {
+  const bar = document.getElementById('statusBar');
+  bar.className = 'status-bar ' + type;
+  document.getElementById('statusText').textContent = msg;
+  bar.style.display = 'flex';
+}
+function hideStatus() {
+  document.getElementById('statusBar').style.display = 'none';
+}
+
+// ===== Init =====
+if (token) {
+  hideAuth();
+  loadProducts();
+} else {
+  showAuth();
+}
+</script>
+</body>
+</html>

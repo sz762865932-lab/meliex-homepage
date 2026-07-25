@@ -1,0 +1,317 @@
+/* ============================================
+   MELIEX — Pet Supply Sourcing Partner
+   Gold #C4956A  ·  Navy #1A2B4A  ·  Cream #F5F0E8
+   ============================================ */
+
+:root {
+  --gold:      #C4956A;
+  --gold-lite: #D4B08C;
+  --dark:      #1A2B4A;
+  --dark-soft: #2C3E5A;
+  --cream:     #F5F0E8;
+  --white:     #FFFFFF;
+  --gray:      #6B7280;
+  --gray-lite: #9CA3AF;
+  --line:      #E5E0D8;
+  --bg:        #FAF8F5;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color:var(--dark);background:var(--white);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased
+}
+img{display:block;max-width:100%}
+a{color:var(--gold);text-decoration:none;transition:color .2s}
+a:hover{color:var(--dark)}
+
+/* -------- nav -------- */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line)
+}
+.nav-inner{
+  max-width:1100px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;padding:0 2rem
+}
+.nav-brand{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:1.05rem;font-weight:700;
+  letter-spacing:.14em;color:var(--gold)
+}
+.nav-links{list-style:none;display:flex;gap:2rem}
+.nav-links a{
+  font-size:.72rem;font-weight:500;color:var(--dark);
+  letter-spacing:.05em;padding-bottom:3px;
+  border-bottom:2px solid transparent;transition:border-color .2s
+}
+.nav-links a:hover{border-bottom-color:var(--gold)}
+
+/* -------- hero -------- */
+.hero{
+  position:relative;height:85vh;min-height:540px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;margin-top:60px
+}
+.hero-bg{
+  position:absolute;inset:0;z-index:0
+}
+.hero-bg img{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(.5) saturate(.8)
+}
+.hero-overlay{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,rgba(26,43,74,.2) 0%,rgba(26,43,74,.6) 100%)
+}
+.hero-content{
+  position:relative;z-index:2;text-align:center;color:var(--white);
+  padding:2rem;max-width:640px
+}
+.hero-title{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:3.2rem;font-weight:700;
+  letter-spacing:.2em;margin-bottom:.4rem
+}
+.hero-sub{
+  font-size:.78rem;font-weight:500;
+  letter-spacing:.1em;opacity:.85;margin-bottom:.25rem
+}
+.hero-cn{
+  font-size:.75rem;opacity:.55;letter-spacing:.06em;margin-bottom:2rem
+}
+.hero-tagline{
+  font-size:.85rem;opacity:.7;
+  letter-spacing:.04em;
+  border-top:1px solid rgba(255,255,255,.15);
+  padding-top:1.5rem
+}
+
+/* -------- sections -------- */
+.section{padding:5.5rem 2rem}
+.section-products{background:var(--bg)}
+.section-contact{background:var(--white)}
+.container{max-width:1000px;margin:0 auto}
+.container-sm{max-width:780px;margin:0 auto}
+
+.section-header{text-align:center;margin-bottom:3rem}
+.section-title{
+  font-size:1.55rem;font-weight:700;color:var(--dark);
+  letter-spacing:.02em;margin-bottom:.35rem
+}
+.section-sub{
+  color:var(--gray);font-size:.82rem;
+  max-width:360px;margin:0 auto
+}
+
+/* -------- intro -------- */
+.intro{padding-top:5rem;padding-bottom:4rem}
+.intro-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1.5rem
+}
+.intro-card{
+  text-align:center;padding:1.5rem 1rem
+}
+.intro-mark{
+  font-size:.5rem;color:var(--gold);margin-bottom:1rem;opacity:.5
+}
+.intro-card h3{
+  font-size:.92rem;font-weight:600;color:var(--dark);
+  margin-bottom:.7rem;letter-spacing:.03em
+}
+.intro-card p{
+  font-size:.76rem;color:var(--gray);line-height:1.75
+}
+
+/* -------- products -------- */
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1.25rem;margin-bottom:3rem
+}
+.product-card{
+  background:var(--white);
+  border:1px solid var(--line);
+  overflow:hidden;
+  transition:transform .25s,border-color .25s,box-shadow .25s
+}
+.product-card:hover{
+  transform:translateY(-4px);
+  border-color:var(--gold-dim);
+  box-shadow:0 8px 28px rgba(0,0,0,.05)
+}
+.pc-img{
+  aspect-ratio:4/3;background:var(--bg);
+  display:flex;align-items:center;justify-content:center
+}
+.pc-placeholder{
+  font-family:Georgia,serif;
+  font-size:2rem;color:var(--gold-dim);opacity:.4
+}
+.pc-img img{
+  width:100%;height:100%;object-fit:cover
+}
+.product-card h4{
+  font-size:.8rem;font-weight:600;color:var(--dark);
+  padding:1rem 1.2rem .15rem;letter-spacing:.01em
+}
+.product-card p{
+  font-size:.68rem;color:var(--gray);
+  padding:.15rem 1.2rem 1.2rem
+}
+
+.catalog-bar{text-align:center;margin-top:.5rem}
+.btn-catalog{
+  display:inline-block;
+  padding:.65rem 1.8rem;
+  border:1.5px solid var(--gold);
+  color:var(--gold);
+  font-size:.78rem;font-weight:600;
+  letter-spacing:.03em;
+  transition:all .25s
+}
+.btn-catalog:hover{background:var(--gold);color:var(--white)}
+.catalog-hint{
+  display:block;margin-top:.65rem;
+  font-size:.68rem;color:var(--gray-lite)
+}
+
+/* -------- advantages -------- */
+.section-advantages{background:var(--white)}
+.adv-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0
+}
+.adv-item{
+  display:flex;align-items:flex-start;gap:1.2rem;
+  padding:1.8rem 2rem;
+  border-bottom:1px solid var(--line)
+}
+.adv-item:nth-child(odd){border-right:1px solid var(--line)}
+.adv-item:nth-child(n+3){border-bottom:none}
+.adv-num{
+  flex-shrink:0;
+  font-family:Georgia,serif;
+  font-size:1.05rem;color:var(--gold);
+  font-weight:700;letter-spacing:.04em;
+  opacity:.65;line-height:1.2
+}
+.adv-item h3{
+  font-size:.88rem;font-weight:600;color:var(--dark);
+  margin-bottom:.3rem
+}
+.adv-item p{
+  font-size:.73rem;color:var(--gray);line-height:1.7
+}
+
+.accent-block{margin-top:2.5rem}
+.accent-img{
+  width:100%;height:220px;object-fit:cover;
+  border:1px solid var(--line)
+}
+
+/* -------- contact -------- */
+.contact-card{
+  display:flex;gap:3rem;
+  max-width:860px;margin:2rem auto 0;
+  padding:2.5rem 3rem;
+  background:var(--bg);
+  border:1px solid var(--line)
+}
+.contact-main{flex:1}
+.contact-side{flex:0 0 300px}
+
+.contact-name{
+  font-size:1.05rem;font-weight:700;color:var(--dark);
+  margin-bottom:.1rem
+}
+.contact-name span{
+  font-weight:400;font-size:.75rem;
+  color:var(--gray);margin-left:.5rem
+}
+.contact-role{
+  font-size:.68rem;color:var(--gold);letter-spacing:.06em;
+  margin-bottom:1.5rem;text-transform:uppercase
+}
+
+.contact-table{width:100%;border-collapse:collapse}
+.contact-table td{
+  padding:.45rem 0;font-size:.78rem;color:var(--dark);
+  border-bottom:1px solid var(--line)
+}
+.ct-label{
+  width:52px;font-size:.65rem!important;
+  font-weight:700;color:var(--gold)!important;
+  text-transform:uppercase;letter-spacing:.08em
+}
+.contact-table a{color:var(--dark)}
+.contact-table a:hover{color:var(--gold)}
+
+/* -------- license -------- */
+.license-card{
+  padding:1.8rem;background:var(--white);
+  border:1px solid var(--line);text-align:center
+}
+.license-logo{max-width:52px;margin:0 auto .7rem;opacity:.65}
+.license-name{
+  font-size:.72rem;font-weight:600;color:var(--dark);
+  margin-bottom:.25rem;line-height:1.5
+}
+.license-name-cn{
+  font-size:.68rem;color:var(--gray);margin-bottom:.7rem
+}
+.license-card hr{
+  border:none;height:1px;background:var(--line);
+  width:36px;margin:0 auto .7rem
+}
+.license-detail{
+  font-size:.6rem;color:var(--gray);line-height:2
+}
+
+/* -------- footer -------- */
+.footer{
+  background:var(--dark);padding:3rem 2rem
+}
+.footer-inner{
+  display:flex;justify-content:space-between;align-items:center
+}
+.footer-name{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:.75rem;color:var(--gold);letter-spacing:.12em;
+  margin-bottom:.1rem
+}
+.footer-inner p{color:rgba(255,255,255,.38);font-size:.63rem;line-height:1.8}
+.footer-right{text-align:right}
+
+/* -------- responsive -------- */
+@media(max-width:768px){
+  .hero{height:65vh;min-height:420px}
+  .hero-title{font-size:2.2rem}
+  .nav-inner{padding:0 1rem}
+  .nav-links{gap:1rem}
+  .section{padding:3.5rem 1.5rem}
+  .intro-grid{grid-template-columns:1fr;gap:1rem}
+  .intro-card{padding:1rem}
+  .product-grid{grid-template-columns:repeat(2,1fr)}
+  .adv-grid{grid-template-columns:1fr}
+  .adv-item{border-right:none!important;padding:1.2rem 1.5rem}
+  .adv-item:nth-child(3){border-bottom:1px solid var(--line)}
+  .contact-card{flex-direction:column;gap:2rem;padding:2rem 1.5rem}
+  .contact-side{flex:none}
+  .footer-inner{flex-direction:column;gap:1rem;text-align:center}
+  .footer-right{text-align:center}
+}
+@media(max-width:480px){
+  .hero{height:55vh;min-height:360px}
+  .hero-title{font-size:1.7rem}
+  .nav-links{gap:.7rem;font-size:.7rem}
+  .product-grid{grid-template-columns:1fr}
+  .contact-card{padding:1.5rem 1rem}
+}

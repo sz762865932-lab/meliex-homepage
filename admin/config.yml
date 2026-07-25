@@ -1,0 +1,25 @@
+backend:
+  name: github
+  repo: sz762865932/meliex-homepage
+  branch: main
+  base_url: https://meliexpet.cn
+  auth_endpoint: /api/auth
+
+media_folder: "images/products"
+public_folder: "/images/products"
+
+collections:
+  - name: "products"
+    label: "产品"
+    folder: "data/products"
+    create: true
+    slug: "{{slug}}"
+    format: "json"
+    extension: "json"
+    fields:
+      - { label: "产品名称（英文）", name: "title", widget: "string" }
+      - { label: "分类标签", name: "category", widget: "string", hint: "如 cat-litter, feeding" }
+      - { label: "简短描述", name: "description", widget: "string", hint: "一行话" }
+      - { label: "详细描述", name: "body", widget: "markdown", required: false }
+      - { label: "产品图片", name: "image", widget: "image", required: false }
+      - { label: "排序", name: "order", widget: "number", value_type: "int", default: 99 }

@@ -1,0 +1,32 @@
+{
+  "products": [
+    {
+      "name": "Cat Litter & Substrates",
+      "category": "cat-litter",
+      "description": "Tapioca · Tofu · Blended",
+      "image": "",
+      "order": 1
+    },
+    {
+      "name": "Litter Boxes",
+      "category": "litter-boxes",
+      "description": "Open · Enclosed · Semi-enclosed",
+      "image": "",
+      "order": 2
+    },
+    {
+      "name": "Pet Feeding",
+      "category": "feeding",
+      "description": "Stainless steel bowls · Stands · Feeders",
+      "image": "",
+      "order": 3
+    },
+    {
+      "name": "Bedding & Crates",
+      "category": "bedding-crates",
+      "description": "Cat beds · Dog mats · Foldable crates",
+      "image": "",
+      "order": 4
+    }
+  ]
+}
