@@ -3,28 +3,28 @@
     {
       "name": "Pet Feeding",
       "category": "feeding",
-      "description": "Stainless steel bowls Â· Stands Â· Feeders",
-      "image": "",
+      "description": "Stainless steel bowls ÃÂ· Stands ÃÂ· Feeders",
+      "image": "sku1.png",
       "order": 1
     },
     {
       "name": "Litter Boxes",
       "category": "litter-boxes",
-      "description": "Open Â· Enclosed Â· Semi-enclosed",
+      "description": "Open ÃÂ· Enclosed ÃÂ· Semi-enclosed",
       "image": "",
       "order": 2
     },
     {
       "name": "Cat Litter & Substrates",
       "category": "cat-litter",
-      "description": "Tapioca Â· Tofu Â· Blended",
+      "description": "Tapioca ÃÂ· Tofu ÃÂ· Blended",
       "image": "",
       "order": 3
     },
     {
       "name": "Bedding & Crates",
       "category": "bedding-crates",
-      "description": "Cat beds Â· Dog mats Â· Foldable crates",
+      "description": "Cat beds ÃÂ· Dog mats ÃÂ· Foldable crates",
       "image": "",
       "order": 4
     }
