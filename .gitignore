@@ -5,3 +5,4 @@ preview-*.png
 *.md
 !.gitignore
 !README.md
+admin-token.txt
