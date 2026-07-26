@@ -1,31 +1,31 @@
 {
   "products": [
     {
-      "name": "Pet Feeding",
-      "category": "feeding",
-      "description": "Stainless steel bowls ÃÂ· Stands ÃÂ· Feeders",
-      "image": "sku1.png",
+      "name": "Cat Litter",
+      "category": "cat-litter",
+      "description": "Highly Adsorbent.Odor-Control.Eco-Friendly . Flushable",
+      "image": "hd47166763b7848ed91b0cdcf896bf88ft.jpg",
       "order": 1
     },
     {
       "name": "Litter Boxes",
       "category": "litter-boxes",
-      "description": "Open ÃÂ· Enclosed ÃÂ· Semi-enclosed",
-      "image": "",
+      "description": "The space is spacious, allowing for ease of movement. It's also convenient for cleaning.",
+      "image": "o1cn01aeucds29dd8dmfc6b_--2217510058034-0-cib.jpg",
       "order": 2
     },
     {
-      "name": "Cat Litter & Substrates",
-      "category": "cat-litter",
-      "description": "Tapioca ÃÂ· Tofu ÃÂ· Blended",
-      "image": "",
+      "name": "Pet Feeding",
+      "category": "feeding",
+      "description": "Fully automatic timing and quantitative control.",
+      "image": "o1cn01vgudfv1toece0zdnz_--2208169435948-0-cib.jpg",
       "order": 3
     },
     {
-      "name": "Bedding & Crates",
-      "category": "bedding-crates",
-      "description": "Cat beds ÃÂ· Dog mats ÃÂ· Foldable crates",
-      "image": "",
+      "name": "Cat Climbing Frame",
+      "category": "cat climbing frame",
+      "description": "Multiple gameplay options create a cat paradise.",
+      "image": "o1cn01t5zxhz1iu7akyalu6_--2076734415-0-cib.jpg",
       "order": 4
     }
   ]
