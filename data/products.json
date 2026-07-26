@@ -4,7 +4,7 @@
       "name": "Cat Litter",
       "category": "cat-litter",
       "description": "Highly Adsorbent.Odor-Control.Eco-Friendly . Flushable",
-      "image": "hd47166763b7848ed91b0cdcf896bf88ft.jpg",
+      "image": "hd47166763b7848ed91b0cdcf896bf88ft-1-.jpg",
       "order": 1
     },
     {
@@ -18,14 +18,14 @@
       "name": "Pet Feeding",
       "category": "feeding",
       "description": "Fully automatic timing and quantitative control.",
-      "image": "----1.jpg",
+      "image": "----1-1-.jpg",
       "order": 3
     },
     {
       "name": "Cat Climbing Frame",
       "category": "cat climbing frame",
       "description": "Multiple gameplay options create a cat paradise.",
-      "image": "----2.jpg",
+      "image": "----2-1-.jpg",
       "order": 4
     }
   ]
